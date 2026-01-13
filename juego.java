@@ -56,13 +56,13 @@ public class PruebasAhorcado {
                             System.out.println("Has ganado");
                             victoriasJugador++;
                             adivinado = true;
-                            contador = 6; // Forzamos la salida del bucle while
+                            contador = 6; 
                         } else {
-                            contador++; // Solo sumamos intento si la palabra era de 5 y no acertó
+                            contador++; 
                         }
                     } else {
                         System.out.println("Error: La palabra debe tener exactamente 5 letras.");
-                        // No hace falta continue, el bucle volverá a empezar solo
+                     
                     }
                 }
 
