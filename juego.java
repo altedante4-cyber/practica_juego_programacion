@@ -1,14 +1,13 @@
+package UD5;
 import java.util.Scanner;
 import java.util.Random;
 
-public class JuegoAhorcado {
-    // Variables globales
+public class PruebasAhorcado {
     static String palabras[] = {"pirlo", "cafes", "messi", "clavo", "tigre", "piano", "libro", "radio", "playa", "perro", "goles", "atomo", "nieve"};
     static int contador = 0; 
     static Scanner sc = new Scanner(System.in);
     static Random leter = new Random();
     
-    // Marcadores de victoria
     static int victoriasJugador = 0;
     static int victoriasOrdenador = 0;
 
@@ -16,8 +15,7 @@ public class JuegoAhorcado {
     static String palabra_jugar;
 
     public static void main(String[] args) {
-        // DECLARACIÓN ÚNICA DE OPCIÓN (Para evitar el error de scope y duplicación)
-        char opcion; 
+        char opcion = ' '; 
 
         do {
             System.out.println("\n--- MARCADOR ---");
@@ -25,16 +23,15 @@ public class JuegoAhorcado {
             System.out.println();
             System.out.println("¿Quieres jugar una partida? (n = jugar / s = salir): ");
             
-            // Leemos la opción y evitamos errores si el usuario solo pulsa Enter
             String entrada = sc.nextLine().toLowerCase();
-            if (entrada.isEmpty()) {
-                opcion = ' '; 
-            } else {
+            
+            if (entrada.length() > 0) {
                 opcion = entrada.charAt(0);
+            } else {
+                opcion = ' '; 
             }
 
             if (opcion == 'n') {
-                // palabra aleatoria 
                 int elegir_palabra = leter.nextInt(palabras.length);
                 palabra_jugar = generaPalabra(palabras, elegir_palabra);
                 
@@ -46,33 +43,30 @@ public class JuegoAhorcado {
                     System.out.print("Introduce tu palabra de 5 letras: ");
                     usuario = sc.nextLine().toLowerCase();
 
-                    // Validación de longitud
-                    if (usuario.length() != 5) {
+                    if (usuario.length() == 5) {
+                        char[] resultadoVisual = compruebaLetrasAcertadas(usuario);
+                        
+                        System.out.print("Resultado: ");
+                        for (int i = 0; i < resultadoVisual.length; i++) {
+                            System.out.print(resultadoVisual[i] + " ");
+                        }
+                        System.out.println();
+
+                        if (haGanadoJugador(usuario)) {
+                            System.out.println("Has ganado");
+                            victoriasJugador++;
+                            adivinado = true;
+                            contador = 6; // Forzamos la salida del bucle while
+                        } else {
+                            contador++; // Solo sumamos intento si la palabra era de 5 y no acertó
+                        }
+                    } else {
                         System.out.println("Error: La palabra debe tener exactamente 5 letras.");
-                        continue;
+                        // No hace falta continue, el bucle volverá a empezar solo
                     }
-
-                    // Comprobamos el resultado
-                    char[] resultadoVisual = compruebaLetrasAcertadas(usuario);
-                    
-                    System.out.print("Resultado: ");
-                    for (char c : resultadoVisual) {
-                        System.out.print(c + " ");
-                    }
-                    System.out.println();
-
-                    // ¿Ha ganado?
-                    if (haGanadoJugador(usuario)) {
-                        System.out.println("Has ganado");
-                        victoriasJugador++;
-                        adivinado = true;
-                        break; 
-                    }
-
-                    contador++;
                 }
 
-                if (!adivinado) {
+                if (adivinado == false) {
                     System.out.println("\nHas perdido. La palabra era: " + palabra_jugar.toUpperCase());
                     victoriasOrdenador++;
                 }
@@ -83,36 +77,30 @@ public class JuegoAhorcado {
         System.out.println("Juego finalizado. ¡Hasta pronto!");
     }
 
-    // Mira si el usuario acertó la palabra completa
     public static boolean haGanadoJugador(String user) {
         return user.equals(palabra_jugar);
     }
 
-    // Lógica de pistas: MAYÚSCULA (posición OK), minúscula (existe pero sitio mal), * (no existe)
     public static char[] compruebaLetrasAcertadas(String user) {
         char resultado[] = new char[5];
-
         for (int i = 0; i < 5; i++) {
             char letraUser = user.charAt(i);
             char letraSecreta = palabra_jugar.charAt(i);
 
             if (letraUser == letraSecreta) {
-                // Acierto total: Convertimos a mayúscula usando ASCII o Character.toUpperCase
                 resultado[i] = Character.toUpperCase(letraUser);
             } else {
-                // Comprobamos si la letra existe en cualquier otra parte de la palabra
                 boolean existe = false;
                 for (int j = 0; j < 5; j++) {
                     if (letraUser == palabra_jugar.charAt(j)) {
                         existe = true;
-                        break;
                     }
                 }
                 
                 if (existe) {
-                    resultado[i] = letraUser; // Se queda en minúscula
+                    resultado[i] = letraUser; 
                 } else {
-                    resultado[i] = '*'; // No existe
+                    resultado[i] = '*'; 
                 }
             }
         }
